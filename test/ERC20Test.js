@@ -1,4 +1,4 @@
-import { expectRevert, expectEvent } from '@openzeppelin/test-helpers';
+const { expectRevert, expectEvent } = require('@openzeppelin/test-helpers');
 const Token = artifacts.require("ERC20Token.sol");
 
 contract("ERC20Token", (accounts) => { let token; const initialBalance = web3.utils.toBN(web3.utils.toWei("1"));

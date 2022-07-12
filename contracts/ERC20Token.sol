@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: UNLICENSED 
 pragma solidity >=0.5.0 <0.9.0;
 
-interface ERC20Interface { 
+interface IERC20 { 
 
     function totalSupply() external view returns (uint256);
     function balanceOf(address tokenOwner) external view returns (uint256 balance);
@@ -14,54 +14,54 @@ interface ERC20Interface {
     event Approval(address indexed tokenOwner,address indexed spender,uint256 tokens);
 }
 
-contract ERC20Token is ERC20Interface { 
+contract ERC20Token is IERC20 { 
 
     string public name; 
     string public symbol; 
     uint8 public decimals; 
     uint256 public _totalSupply; 
-    mapping(address => uint256) public balances; 
-    mapping(address => mapping(address => uint256)) public allowed;
+    mapping(address => uint256) public totalBalance; 
+    mapping(address => mapping(address => uint256)) public allow;
 
     constructor(string memory _name,string memory _symbol,uint8 _decimals,uint256 _initialSupply) {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
         _totalSupply = _initialSupply;
-        balances[msg.sender] = _totalSupply;
+        totalBalance[msg.sender] = _totalSupply;
     }
 
     function transfer(address to, uint256 value)public override returns (bool)
     {
-        require(balances[msg.sender] >= value, "not sufficient balance");
-        balances[msg.sender] -= value;
-        balances[to] += value;
+        require(totalBalance[msg.sender] >= value, "not sufficient balance");
+        totalBalance[msg.sender] -= value;
+        totalBalance[to] += value;
         emit Transfer(msg.sender, to, value);
         return true;
     }
 
     function transferFrom(address from, address to, uint256 value) public override returns (bool) {
-        require(allowed[from][msg.sender] >= value, "allowance too low");
-        require(balances[from] >= value, "token balance too low");
-        allowed[from][msg.sender] -= value; //allowed[accounts[0]][accounts[1]]-100
-        balances[from] -= value;
-        balances[to] += value;
+        require(allow[from][msg.sender] >= value, "allowance too low");
+        require(totalBalance[from] >= value, "token balance too low");
+        allow[from][msg.sender] -= value; //allowed[accounts[0]][accounts[1]]-100
+        totalBalance[from] -= value;
+        totalBalance[to] += value;
         emit Transfer(from, to, value);
         return true;
     }
 
     function approve(address spender, uint256 value) public override returns (bool){
-        allowed[msg.sender][spender] = value;
+        allow[msg.sender][spender] = value;
         emit Approval(msg.sender, spender, value);
         return true;
     }
 
     function allowance(address owner, address spender) public view override returns (uint256){
-        return allowed[owner][spender];
+        return allow[owner][spender];
     }
 
     function balanceOf(address owner) public view override returns (uint256) {
-        return balances[owner];
+        return totalBalance[owner];
     }
 
     function totalSupply() public view override returns (uint256) {
