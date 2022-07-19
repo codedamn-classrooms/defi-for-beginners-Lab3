@@ -43,7 +43,7 @@ contract ERC20Token is IERC20 {
     function transferFrom(address from, address to, uint256 value) public override returns (bool) {
         require(allow[from][msg.sender] >= value, "allowance too low");
         require(totalBalance[from] >= value, "token balance too low");
-        allow[from][msg.sender] -= value; //allowed[accounts[0]][accounts[1]]-100
+        allow[from][msg.sender] -= value; 
         totalBalance[from] -= value;
         totalBalance[to] += value;
         emit Transfer(from, to, value);
